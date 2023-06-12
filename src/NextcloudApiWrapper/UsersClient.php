@@ -2,9 +2,6 @@
 
 namespace NextcloudApiWrapper;
 
-use App\Service\NextcloudApiWrapper\AbstractClient;
-use App\Service\NextcloudApiWrapper\Connection;
-use App\Service\NextcloudApiWrapper\NextcloudResponse;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UsersClient extends AbstractClient
