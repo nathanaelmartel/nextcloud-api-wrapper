@@ -2,11 +2,14 @@
 
 namespace NextcloudApiWrapper;
 
+use App\Service\NextcloudApiWrapper\AbstractClient;
+use App\Service\NextcloudApiWrapper\Connection;
+use App\Service\NextcloudApiWrapper\NextcloudResponse;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UsersClient extends AbstractClient
 {
-    const   USER_PART   = 'v1.php/cloud/users';
+    const   USER_PART = 'v1.php/cloud/users';
 
     /**
      * Adds a user.
@@ -14,11 +17,20 @@ class UsersClient extends AbstractClient
      * @param $password
      * @return NextcloudResponse
      */
-    public function addUser($username, $password) {
+    public function addUser(
+        string $userid,
+        string $password,
+        string $displayName,
+        string $email,
+        string $language = 'fr'
+    ) {
 
         return $this->connection->submitRequest(Connection::POST, self::USER_PART, [
-            'userid'    => $username,
-            'password'  => $password
+            'userid' => $userid,
+            'password' => $password,
+            'displayName' => $displayName,
+            'email' => $email,
+            'language' => $language,
         ]);
     }
 
@@ -27,17 +39,18 @@ class UsersClient extends AbstractClient
      * @param array $params
      * @return NextcloudResponse
      */
-    public function getUsers(array $params = []) {
+    public function getUsers(array $params = [])
+    {
 
-        $params = $this->resolve($params, function(OptionsResolver $resolver) {
+        $params = $this->resolve($params, function (OptionsResolver $resolver) {
             $resolver->setDefaults([
                 'search',
                 'limit',
-                'offset'
+                'offset',
             ]);
         });
 
-        return $this->connection->request(Connection::GET, self::USER_PART . $this->buildUriParams($params));
+        return $this->connection->request(Connection::GET, self::USER_PART.$this->buildUriParams($params));
     }
 
     /**
@@ -45,9 +58,10 @@ class UsersClient extends AbstractClient
      * @param $username
      * @return NextcloudResponse
      */
-    public function getUser($username) {
+    public function getUser($username)
+    {
 
-        return $this->connection->request(Connection::GET, self::USER_PART . '/' . $username);
+        return $this->connection->request(Connection::GET, self::USER_PART.'/'.$username);
     }
 
     /**
@@ -57,7 +71,8 @@ class UsersClient extends AbstractClient
      * @param $value
      * @return NextcloudResponse
      */
-    public function editUser($username, $key, $value) {
+    public function editUser($username, $key, $value)
+    {
 
         $this->inArray($key, [
             'email',
@@ -67,12 +82,12 @@ class UsersClient extends AbstractClient
             'address',
             'website',
             'twitter',
-            'password'
+            'password',
         ]);
 
-        return $this->connection->submitRequest(Connection::PUT, self::USER_PART . '/' . $username, [
-            'key'   => $key,
-            'value' => $value
+        return $this->connection->submitRequest(Connection::PUT, self::USER_PART.'/'.$username, [
+            'key' => $key,
+            'value' => $value,
         ]);
     }
 
@@ -81,9 +96,10 @@ class UsersClient extends AbstractClient
      * @param $username
      * @return NextcloudResponse
      */
-    public function disableUser($username) {
+    public function disableUser($username)
+    {
 
-        return $this->connection->pushDataRequest(Connection::PUT, self::USER_PART . '/' . $username . '/disable');
+        return $this->connection->pushDataRequest(Connection::PUT, self::USER_PART.'/'.$username.'/disable');
     }
 
     /**
@@ -91,9 +107,10 @@ class UsersClient extends AbstractClient
      * @param $username
      * @return NextcloudResponse
      */
-    public function enableUser($username) {
+    public function enableUser($username)
+    {
 
-        return $this->connection->pushDataRequest(Connection::PUT, self::USER_PART . '/' . $username . '/enable');
+        return $this->connection->pushDataRequest(Connection::PUT, self::USER_PART.'/'.$username.'/enable');
     }
 
     /**
@@ -101,9 +118,10 @@ class UsersClient extends AbstractClient
      * @param $username
      * @return NextcloudResponse
      */
-    public function deleteUser($username) {
+    public function deleteUser($username)
+    {
 
-        return $this->connection->request(Connection::DELETE, self::USER_PART . '/' . $username);
+        return $this->connection->request(Connection::DELETE, self::USER_PART.'/'.$username);
     }
 
     /**
@@ -111,9 +129,10 @@ class UsersClient extends AbstractClient
      * @param $username
      * @return NextcloudResponse
      */
-    public function getUserGroups($username) {
+    public function getUserGroups($username)
+    {
 
-        return $this->connection->request(Connection::GET, self::USER_PART . '/' . $username . '/groups');
+        return $this->connection->request(Connection::GET, self::USER_PART.'/'.$username.'/groups');
     }
 
     /**
@@ -122,10 +141,11 @@ class UsersClient extends AbstractClient
      * @param $groupname
      * @return NextcloudResponse
      */
-    public function addUserToGroup($username, $groupname) {
+    public function addUserToGroup($username, $groupname)
+    {
 
-        return $this->connection->submitRequest(Connection::POST, self::USER_PART . '/' . $username . '/groups', [
-            'groupid'   => $groupname
+        return $this->connection->submitRequest(Connection::POST, self::USER_PART.'/'.$username.'/groups', [
+            'groupid' => $groupname,
         ]);
     }
 
@@ -135,10 +155,11 @@ class UsersClient extends AbstractClient
      * @param $groupname
      * @return NextcloudResponse
      */
-    public function removeUserFromGroup($username, $groupname) {
+    public function removeUserFromGroup($username, $groupname)
+    {
 
-        return $this->connection->submitRequest(Connection::DELETE, self::USER_PART . '/' . $username . '/groups', [
-            'groupid'   => $groupname
+        return $this->connection->submitRequest(Connection::DELETE, self::USER_PART.'/'.$username.'/groups', [
+            'groupid' => $groupname,
         ]);
     }
 
@@ -148,10 +169,11 @@ class UsersClient extends AbstractClient
      * @param $groupname
      * @return NextcloudResponse
      */
-    public function promoteUserSubadminOfGroup($username, $groupname) {
+    public function promoteUserSubadminOfGroup($username, $groupname)
+    {
 
-        return $this->connection->submitRequest(Connection::POST, self::USER_PART . '/' . $username . '/subadmins', [
-            'groupid'   => $groupname
+        return $this->connection->submitRequest(Connection::POST, self::USER_PART.'/'.$username.'/subadmins', [
+            'groupid' => $groupname,
         ]);
     }
 
@@ -161,10 +183,11 @@ class UsersClient extends AbstractClient
      * @param $groupname
      * @return NextcloudResponse
      */
-    public function demoteUserSubadminOfGroup($username, $groupname) {
+    public function demoteUserSubadminOfGroup($username, $groupname)
+    {
 
-        return $this->connection->submitRequest(Connection::DELETE, self::USER_PART . '/' . $username . '/subadmins', [
-            'groupid'   => $groupname
+        return $this->connection->submitRequest(Connection::DELETE, self::USER_PART.'/'.$username.'/subadmins', [
+            'groupid' => $groupname,
         ]);
     }
 
@@ -173,9 +196,10 @@ class UsersClient extends AbstractClient
      * @param $username
      * @return NextcloudResponse
      */
-    public function getUserSubadminGroups($username) {
+    public function getUserSubadminGroups($username)
+    {
 
-        return $this->connection->request(Connection::GET, self::USER_PART . '/' . $username . '/subadmins');
+        return $this->connection->request(Connection::GET, self::USER_PART.'/'.$username.'/subadmins');
     }
 
     /**
@@ -183,9 +207,10 @@ class UsersClient extends AbstractClient
      * @param $username
      * @return NextcloudResponse
      */
-    public function resendWelcomeEmail($username) {
+    public function resendWelcomeEmail($username)
+    {
 
-        return $this->connection->request(Connection::POST, self::USER_PART . '/' . $username . '/welcome');
+        return $this->connection->request(Connection::POST, self::USER_PART.'/'.$username.'/welcome');
     }
 
 }

@@ -1,16 +1,13 @@
 # Nextcloud API wrapper for PHP
 
 This is a simple php wrapper around
-- [user provisioning api](https://docs.nextcloud.com/server/12/admin_manual/configuration_user/user_provisioning_api.html)
-- [shares api](https://docs.nextcloud.com/server/12/developer_manual/core/ocs-share-api.html)
+- [user provisioning api](https://docs.nextcloud.com/server/stable/admin_manual/configuration_user/user_provisioning_api.html?highlight=provisionning)
+- [shares api](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-share-api.html)
 
-which allows you to manage your nextcloud instance dynamically. It's meant to 
-be the closest possible to the API, every parameter is available and method names should 
-be understandable enough, dont hesitate to make use of the api documentation 
-seeking help on what params are available for each method.
-
-This library was partially tested with nextcloud 12 and 13. It was developed to fit my needs but I implemented all
-remaining methods. If you find any bug, don't hesitate to open an issue.
+which allows you to manage your nextcloud instance dynamically : 
+- create users
+- change users params
+- send welcome mail
 
 ##### Warning
 > Nextcloud API uses basic http auth, which means username and password
@@ -20,7 +17,7 @@ to enforce it using SSL.
 ## Installation
 Install it with composer
 ```
-composer require sysmoh/nextcloud-api-wrapper
+composer require nathanaelmartel/nextcloud-api-wrapper
 ```
 
 ## Basic usage
@@ -51,6 +48,9 @@ $code       = $response->getStatusCode();   //status code
 $users      = $response->getData();         //data as array
 $message    = $response->getStatus();       //status message
 $guzzle     = $response->getRawResponse();  //Guzzle response
+
+// create user 
+$userClient->addUser('nathanaelmartel', 'password', 'Nathanaël Martel', 'nathanael@simplement-web.com', 'fr');
 ```
 
 ### Making your own requests
